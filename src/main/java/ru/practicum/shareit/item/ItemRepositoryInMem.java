@@ -64,8 +64,7 @@ public class ItemRepositoryInMem implements ItemRepository {
 
     private void checkItemExistsById(long itemId) {
         if (!items.containsKey(itemId)) {
-            throw new ObjectNotFoundException(String.format
-                    ("Ошибка: вещи с id %d не существует", itemId));
+            throw new ObjectNotFoundException(String.format("Ошибка: вещи с id %d не существует", itemId));
         }
     }
 }
