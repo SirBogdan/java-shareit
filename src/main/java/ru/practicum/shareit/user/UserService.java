@@ -16,4 +16,6 @@ public interface UserService {
     List<UserDtoUpdate> getAllUsers();
 
     void deleteUser(long userId);
+
+    void checkUserExistsById(long userId);
 }

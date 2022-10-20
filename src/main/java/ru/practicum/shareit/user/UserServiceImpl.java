@@ -1,70 +1,63 @@
 package ru.practicum.shareit.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptions.ConflictException;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.user.dto.UserDtoCreate;
 import ru.practicum.shareit.user.dto.UserDtoUpdate;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
-
-    private final Set<String> emails = new HashSet<>();
     private final UserRepository userRepository;
 
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
+    @Transactional
     public UserDtoCreate createUser(UserDtoCreate userDtoCreate) {
         User user = UserMapper.fromUserDtoCreate(userDtoCreate);
-        checkUserEmail(user.getEmail());
-        emails.add(user.getEmail());
-        user = userRepository.createUser(user);
+        user = userRepository.save(user);
         return UserMapper.toUserDtoCreate(user);
     }
 
+    @Transactional
     public UserDtoUpdate updateUser(UserDtoUpdate userDtoUpdate) {
         User user = UserMapper.fromUserDtoUpdate(userDtoUpdate);
+        User userFromDb = userRepository.findById(user.getId()).orElseThrow(
+                () -> new ObjectNotFoundException(String.format(
+                        "Ошибка: пользователя с id %d не существует", user.getId())));
         if (user.getName() == null) {
-            user.setName(userRepository.getUserById(user.getId()).getName());
+            user.setName(userFromDb.getName());
         }
-        if (user.getEmail() != null) {
-            checkUserEmail(user.getEmail());
-            emails.remove(userRepository.getUserById(user.getId()).getEmail());
-            emails.add(user.getEmail());
-        } else {
-            user.setEmail(userRepository.getUserById(user.getId()).getEmail());
+        if (user.getEmail() == null) {
+            user.setEmail(userFromDb.getEmail());
         }
-        userRepository.updateUser(user);
+        userRepository.save(user);
         return UserMapper.toUserDtoUpdate(user);
     }
 
     public UserDtoUpdate getUserById(long userId) {
-        User user = userRepository.getUserById(userId);
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ObjectNotFoundException(String.format(
+                        "Ошибка: пользователя с id %d не существует", userId)));
         return UserMapper.toUserDtoUpdate(user);
     }
 
     public List<UserDtoUpdate> getAllUsers() {
-        return userRepository.getAllUsers().stream().map(UserMapper::toUserDtoUpdate).collect(Collectors.toList());
+        return userRepository.findAll().stream().map(UserMapper::toUserDtoUpdate).collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteUser(long userId) {
-        emails.remove(getUserById(userId).getEmail());
-        userRepository.deleteUser(userId);
+        userRepository.deleteById(userId);
     }
 
-    private void checkUserEmail(String email) {
-        if (emails.contains(email)) {
-            throw new ConflictException(
-                    String.format("Ошибка: пользователь с email %s уже существует", email)
-            );
-        }
+    public void checkUserExistsById(long userId) {
+        userRepository.findById(userId).orElseThrow(
+                () -> new ObjectNotFoundException(String.format(
+                        "Ошибка: пользователя с id %d не существует", userId)));
     }
 }
