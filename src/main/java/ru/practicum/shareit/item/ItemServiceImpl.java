@@ -54,7 +54,6 @@ public class ItemServiceImpl implements ItemService {
 
     public ItemDtoShowBookings getItemById(long userId, long itemId) {
         Item item = getItemFromRepository(itemId);
-
         BookingDtoForItemShow lastBooking = BookingMapper.toBookingDtoForItemShow(bookingRepository
                 .findFirstByItem_IdAndItem_Owner_IdAndEndBeforeOrderByEndDesc(item.getId(), userId, LocalDateTime.now()));
         BookingDtoForItemShow nextBooking = BookingMapper.toBookingDtoForItemShow(bookingRepository
