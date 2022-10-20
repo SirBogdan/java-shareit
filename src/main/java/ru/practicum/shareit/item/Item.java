@@ -4,25 +4,32 @@ import lombok.*;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
+import javax.persistence.*;
+import java.util.Objects;
+
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
+@RequiredArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "items", schema = "public")
 public class Item {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(name = "name", nullable = false)
     private String name;
+    @Column(name = "description", nullable = false)
     private String description;
+    @Column(name = "is_available")
     private Boolean available;
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
     private User owner;
+    @ManyToOne
+    @JoinColumn(name = "request_id")
     private ItemRequest request;
-
-    public Item(long id, String name, String description, Boolean available) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.available = available;
-    }
 
     public Item(String name, String description, Boolean available, User owner, ItemRequest request) {
         this.name = name;
@@ -30,5 +37,18 @@ public class Item {
         this.available = available;
         this.owner = owner;
         this.request = request;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return id == item.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
