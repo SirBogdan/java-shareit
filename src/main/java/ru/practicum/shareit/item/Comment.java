@@ -27,7 +27,7 @@ public class Comment {
     @JoinColumn(name = "author_id")
     private User author;
     @Column(name = "created")
-    LocalDateTime created;
+    private LocalDateTime created;
 
     public Comment(long id, String text, Item item, User author) {
         this.id = id;

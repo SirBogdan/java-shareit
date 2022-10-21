@@ -12,6 +12,6 @@ import java.time.LocalDateTime;
 public class CommentDtoShow {
     private long id;
     private String text;
-    String authorName;
-    LocalDateTime created;
+    private String authorName;
+    private LocalDateTime created;
 }

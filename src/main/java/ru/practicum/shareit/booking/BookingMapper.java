@@ -1,13 +1,11 @@
 package ru.practicum.shareit.booking;
 
-import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.booking.dto.BookingDtoBodyUrl;
 import ru.practicum.shareit.booking.dto.BookingDtoForItemShow;
 import ru.practicum.shareit.booking.dto.BookingDtoShow;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.user.UserMapper;
 
-@RequiredArgsConstructor
 public class BookingMapper {
 
     public static BookingDtoShow toBookingDtoShow(Booking booking) {
