@@ -8,6 +8,7 @@ import ru.practicum.shareit.item.dto.ItemDtoCreate;
 import ru.practicum.shareit.item.dto.ItemDtoShowBookings;
 import ru.practicum.shareit.item.dto.ItemDtoUpdate;
 
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -35,14 +36,17 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDtoShowBookings getItemById(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemDtoShowBookings getItemById(@RequestHeader("X-Sharer-User-Id") Long userId,
                                            @PathVariable("itemId") Long itemId) {
         return itemService.getItemById(userId, itemId);
     }
 
     @GetMapping
-    public List<ItemDtoShowBookings> getAllItemsByUser(@RequestHeader("X-Sharer-User-Id") long userId) {
-        return itemService.getAllItemsByUser(userId);
+    public List<ItemDtoShowBookings> getAllItemsByUser(
+            @RequestHeader("X-Sharer-User-Id") long userId,
+            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+            @PositiveOrZero @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        return itemService.getAllItemsByUser(userId, from, size);
     }
 
     @DeleteMapping("/{itemId}")
@@ -51,8 +55,11 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDtoUpdate> searchItems(@RequestParam String text) {
-        return itemService.searchItems(text);
+    public List<ItemDtoUpdate> searchItems(
+            @RequestParam String text,
+            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+            @PositiveOrZero @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        return itemService.searchItems(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

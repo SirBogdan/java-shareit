@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDtoBodyUrl;
 import ru.practicum.shareit.booking.dto.BookingDtoShow;
 
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 
@@ -38,14 +39,18 @@ public class BookingController {
     @GetMapping
     public List<BookingDtoShow> getAllBookingsByBooker(
             @RequestHeader("X-Sharer-User-Id") long bookerId,
-            @RequestParam(required = false, defaultValue = "ALL") String state) {
-        return bookingService.getAllBookingsByBooker(bookerId, state);
+            @RequestParam(required = false, defaultValue = "ALL") String state,
+            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+            @PositiveOrZero @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        return bookingService.getAllBookingsByBooker(bookerId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDtoShow> getAllBookingsByOwner(
             @RequestHeader("X-Sharer-User-Id") long ownerId,
-            @RequestParam(required = false, defaultValue = "ALL") String state) {
-        return bookingService.getAllBookingsByOwner(ownerId, state);
+            @RequestParam(required = false, defaultValue = "ALL") String state,
+            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+            @PositiveOrZero @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        return bookingService.getAllBookingsByOwner(ownerId, state, from, size);
     }
 }

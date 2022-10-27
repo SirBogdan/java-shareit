@@ -31,21 +31,20 @@ public class Item {
     @JoinColumn(name = "request_id")
     private ItemRequest request;
 
-    public Item(String name, String description, Boolean available, User owner, ItemRequest request) {
+    public Item(String name, String description, Boolean available, User owner) {
         this.name = name;
         this.description = description;
         this.available = available;
         this.owner = owner;
-        this.request = request;
     }
 
-    @Override
+/*    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Item item = (Item) o;
         return id == item.id;
-    }
+    }*/
 
     @Override
     public int hashCode() {
