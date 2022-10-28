@@ -35,7 +35,7 @@ public class ItemControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private ItemService itemService;
-    ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
     private Item item;
     private User booker;
     private Comment comment;

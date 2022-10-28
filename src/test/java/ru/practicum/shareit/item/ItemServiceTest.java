@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
 @Transactional
 @SpringBootTest
 public class ItemServiceTest {
-    ItemService itemService;
+    private ItemService itemService;
     private ItemRepository itemRepository;
     private UserService userService;
     private BookingRepository bookingRepository;

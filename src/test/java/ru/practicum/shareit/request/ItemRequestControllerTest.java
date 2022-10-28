@@ -34,7 +34,7 @@ public class ItemRequestControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private ItemRequestService itemRequestService;
-    ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
     private ItemRequest itemRequest;
     private final List<ItemDtoShowRequests> itemsDtoShowRequests = new ArrayList<>();
 

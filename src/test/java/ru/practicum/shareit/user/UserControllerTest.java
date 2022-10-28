@@ -30,7 +30,7 @@ public class UserControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private UserService userService;
-    ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
     private User user;
 
     @BeforeEach

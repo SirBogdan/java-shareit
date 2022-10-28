@@ -42,7 +42,7 @@ public class BookingServiceTest {
     private User owner;
     private Booking lastBooking;
     private Booking nextBooking;
-    BookingDtoBodyUrl nextBookingDtoBodyUrl;
+    private BookingDtoBodyUrl nextBookingDtoBodyUrl;
 
     @BeforeEach
     void setUp() {
