@@ -16,7 +16,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 @JsonTest
 public class CommentDtoShowTest {
-
     @Autowired
     private JacksonTester<CommentDtoShow> json;
 

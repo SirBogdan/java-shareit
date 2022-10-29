@@ -18,7 +18,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 @JsonTest
 public class ItemRequestDtoShowTest {
-
     @Autowired
     private JacksonTester<ItemRequestDtoShow> json;
 
