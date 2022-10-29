@@ -58,7 +58,5 @@ public class ItemRequestDtoShowTest {
         assertThat(result.getItems().get(0).getName(), equalTo("item1"));
         assertThat(result.getItems().get(0).getAvailable(), equalTo(true));
         assertThat(result.getItems().get(0).getRequestId(), equalTo(1L));
-
     }
-
 }
