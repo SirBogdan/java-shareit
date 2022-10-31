@@ -15,11 +15,11 @@ public interface ItemService {
 
     ItemDtoShowBookings getItemById(long userId, long itemId);
 
-    List<ItemDtoShowBookings> getAllItemsByUser(long userId);
+    List<ItemDtoShowBookings> getAllItemsByUser(long userId, int from, int size);
 
     void deleteItem(long userId, long itemId);
 
-    List<ItemDtoUpdate> searchItems(String text);
+    List<ItemDtoUpdate> searchItems(String text, int from, int size);
 
     void checkItemBelongToUser(long userId, long itemId);
 

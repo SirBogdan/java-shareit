@@ -1,8 +1,10 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.CustomPageRequest;
 import ru.practicum.shareit.booking.dto.BookingDtoBodyUrl;
 import ru.practicum.shareit.booking.dto.BookingDtoShow;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
@@ -35,7 +37,7 @@ public class BookingServiceImpl implements BookingService {
                         "Ошибка: вещь с id %d не существует", bookingDtoCreate.getItemId()))));
         booking.setBooker(UserMapper.fromUserDtoUpdate(userService.getUserById(userId)));
         booking.setStatus(BookingStatus.WAITING);
-        bookingRepository.save(booking);
+        booking = bookingRepository.save(booking);
         return BookingMapper.toBookingDtoShow(booking);
     }
 
@@ -73,31 +75,32 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toBookingDtoShow(booking);
     }
 
-    public List<BookingDtoShow> getAllBookingsByBooker(Long bookerId, String state) {
+    public List<BookingDtoShow> getAllBookingsByBooker(Long bookerId, String state, int from, int size) {
         userService.checkUserExistsById(bookerId);
         List<Booking> bookings;
         LocalDateTime now = LocalDateTime.now();
+        Pageable pageable = CustomPageRequest.of(from, size);
         switch (state) {
             case "ALL":
-                bookings = bookingRepository.findAllByBooker_IdOrderByStartDesc(bookerId);
+                bookings = bookingRepository.findAllByBooker_IdOrderByStartDesc(bookerId, pageable);
                 break;
             case "CURRENT":
                 bookings = bookingRepository.findAllByStartBeforeAndEndAfterAndBooker_IdOrderByStartDesc(
-                        now, now, bookerId);
+                        now, now, bookerId, pageable);
                 break;
             case "PAST":
-                bookings = bookingRepository.findAllByEndBeforeAndBooker_IdOrderByStartDesc(now, bookerId);
+                bookings = bookingRepository.findAllByEndBeforeAndBooker_IdOrderByStartDesc(now, bookerId, pageable);
                 break;
             case "FUTURE":
-                bookings = bookingRepository.findAllByStartAfterAndBooker_IdOrderByStartDesc(now, bookerId);
+                bookings = bookingRepository.findAllByStartAfterAndBooker_IdOrderByStartDesc(now, bookerId, pageable);
                 break;
             case "WAITING":
                 bookings = bookingRepository.findAllByStatusAndBooker_IdOrderByStartDesc(
-                        BookingStatus.WAITING, bookerId);
+                        BookingStatus.WAITING, bookerId, pageable);
                 break;
             case "REJECTED":
                 bookings = bookingRepository.findAllByStatusAndBooker_IdOrderByStartDesc(
-                        BookingStatus.REJECTED, bookerId);
+                        BookingStatus.REJECTED, bookerId, pageable);
                 break;
             default:
                 throw new ValidationException("Unknown state: " + state);
@@ -105,31 +108,32 @@ public class BookingServiceImpl implements BookingService {
         return bookings.stream().map(BookingMapper::toBookingDtoShow).collect(Collectors.toList());
     }
 
-    public List<BookingDtoShow> getAllBookingsByOwner(long ownerId, String state) {
+    public List<BookingDtoShow> getAllBookingsByOwner(long ownerId, String state, int from, int size) {
         userService.checkUserExistsById(ownerId);
         List<Booking> bookings;
         LocalDateTime now = LocalDateTime.now();
+        Pageable pageable = CustomPageRequest.of(from, size);
         switch (state) {
             case "ALL":
-                bookings = bookingRepository.findAllByItem_Owner_IdOrderByStartDesc(ownerId);
+                bookings = bookingRepository.findAllByItem_Owner_IdOrderByStartDesc(ownerId, pageable);
                 break;
             case "CURRENT":
                 bookings = bookingRepository.findAllByStartBeforeAndEndAfterAndItem_Owner_IdOrderByStartDesc(
-                        now, now, ownerId);
+                        now, now, ownerId, pageable);
                 break;
             case "PAST":
-                bookings = bookingRepository.findAllByEndBeforeAndItem_Owner_IdOrderByStartDesc(now, ownerId);
+                bookings = bookingRepository.findAllByEndBeforeAndItem_Owner_IdOrderByStartDesc(now, ownerId, pageable);
                 break;
             case "FUTURE":
-                bookings = bookingRepository.findAllByStartAfterAndItem_Owner_IdOrderByStartDesc(now, ownerId);
+                bookings = bookingRepository.findAllByStartAfterAndItem_Owner_IdOrderByStartDesc(now, ownerId, pageable);
                 break;
             case "WAITING":
                 bookings = bookingRepository.findAllByStatusAndItem_Owner_IdOrderByStartDesc(
-                        BookingStatus.WAITING, ownerId);
+                        BookingStatus.WAITING, ownerId, pageable);
                 break;
             case "REJECTED":
                 bookings = bookingRepository.findAllByStatusAndItem_Owner_IdOrderByStartDesc(
-                        BookingStatus.REJECTED, ownerId);
+                        BookingStatus.REJECTED, ownerId, pageable);
                 break;
             default:
                 throw new ValidationException("Unknown state: " + state);
@@ -154,7 +158,7 @@ public class BookingServiceImpl implements BookingService {
         }
         if (bookingDtoBodyUrl.getStart().isAfter(bookingDtoBodyUrl.getEnd())) {
             throw new ValidationException("Ошибка: " +
-                    "время окончания бронирования не может быть позже времени начала бронирования");
+                    "время окончания бронирования не может быть раньше времени начала бронирования");
         }
         if (item.getOwner().getId() == userId) {
             throw new ObjectNotFoundException("Ошибка: нельзя бронировать вещь у самого себя");

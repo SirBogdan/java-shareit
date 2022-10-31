@@ -3,6 +3,7 @@ package ru.practicum.shareit.request;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -24,6 +25,8 @@ public class ItemRequest {
     private String description;
     @Column(name = "requestor_id", nullable = false)
     private long requestorId;
+    @Column(name = "created")
+    private LocalDateTime created;
 
     @Override
     public boolean equals(Object o) {

@@ -19,14 +19,15 @@ public class ItemMapper {
     }
 
     public static ItemDtoCreate toItemDtoCreate(Item item) {
-        return new ItemDtoCreate(
+        ItemDtoCreate itemDtoCreate = new ItemDtoCreate(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable(),
-                item.getOwner(),
-                item.getRequest()
+                item.getOwner()
         );
+        if (item.getRequest() != null) itemDtoCreate.setRequestId(item.getRequest().getId());
+        return itemDtoCreate;
     }
 
     public static Item fromItemDtoCreate(ItemDtoCreate itemDto) {
@@ -34,8 +35,7 @@ public class ItemMapper {
                 itemDto.getName(),
                 itemDto.getDescription(),
                 itemDto.getAvailable(),
-                itemDto.getOwner(),
-                itemDto.getRequest()
+                itemDto.getOwner()
         );
     }
 
@@ -56,6 +56,16 @@ public class ItemMapper {
                 nextBooking,
                 comments,
                 item.getRequest()
+        );
+    }
+
+    public static ItemDtoShowRequests toItemDtoShowRequests(Item item) {
+        return new ItemDtoShowRequests(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getAvailable(),
+                item.getRequest().getId()
         );
     }
 }
