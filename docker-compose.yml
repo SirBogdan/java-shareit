@@ -1,5 +1,6 @@
 version: '3.8'
 services:
+
   gateway:
     build: gateway
     container_name: gateway
@@ -24,7 +25,7 @@ services:
     ports:
       - "6541:5432"
     environment:
-      - TZ=Europe/Moscow
+      #- TZ=Europe/Moscow
       - POSTGRES_DB=shareit
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=94633384
